@@ -13,17 +13,21 @@ console.log(`intent-backend listening on http://localhost:${server.port}`);
 console.log("routes:");
 for (const line of [
   "GET  /health",
-  "POST /intents                         create intent (+edits, +dependsOn)",
-  "GET  /intents?workspaceId=            list intents",
-  "GET  /intents/graph                   nodes+edges for the Intent Graph",
-  "GET  /intents/:id                     intent + edits + deps + commits",
-  "GET  /intents/:id/dependencies        depends_on + required_by (direct+transitive)",
-  "POST /intents/:id/dependencies        add a dependency edge",
-  "POST /intents/:id/apply               apply (approve=true for high-risk)",
-  "POST /intents/:id/revert              dry_run + cascade rollback",
-  "POST /intents/:id/commits             attach a git commit",
-  "GET  /intents/:id/stream              realtime SSE event stream",
-  "GET  /events   /stats                 audit log + analytics",
+  "POST /projects                         create a project",
+  "POST /projects/:id/files               upload/replace files (versioned)",
+  "GET  /projects/:id/files[/content]     list files / read content?path=",
+  "GET  /projects/:id/files/history       file version history?path=",
+  "POST /projects/:id/prompts             AGENT: NL prompt -> proposed intent",
+  "GET  /projects/:id/intents             list intents for a project",
+  "GET  /projects/:id/graph               semantic intent graph",
+  "GET  /projects/:id/stream              realtime SSE for the project",
+  "GET  /intents/:id                      intent + edits + deps + executions",
+  "GET  /intents/:id/dependencies         depends_on + required_by",
+  "POST /intents/:id/approve              proposed -> approved (approve=true if high-risk)",
+  "POST /intents/:id/execute              apply edits + snapshot + run tests",
+  "POST /intents/:id/revert               dry_run + cascade rollback (restores files)",
+  "GET  /intents/:id/stream               realtime SSE for one intent",
+  "GET  /events   /stats                  audit log + analytics",
 ])
   console.log("  " + line);
 

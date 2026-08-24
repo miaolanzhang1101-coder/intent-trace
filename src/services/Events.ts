@@ -31,18 +31,23 @@ const make = Effect.gen(function* () {
       yield* PubSub.publish(hub, { ...e, at: e.at ?? new Date().toISOString() });
     });
 
-  /** Live stream of events, optionally filtered to one intent. */
-  const stream = (intentId?: string) =>
+  /** Live stream of events, optionally filtered by intent or workspace/project. */
+  const stream = (filter?: { intentId?: string; workspaceId?: string }) =>
     Stream.fromPubSub(hub).pipe(
-      Stream.filter((e) => (intentId ? e.intentId === intentId : true)),
+      Stream.filter((e) => {
+        if (filter?.intentId && e.intentId !== filter.intentId) return false;
+        if (filter?.workspaceId && e.workspaceId !== filter.workspaceId) return false;
+        return true;
+      }),
     );
 
   /** Recent persisted events (observability read path). */
-  const recent = (opts?: { intentId?: string; limit?: number }) =>
+  const recent = (opts?: { intentId?: string; workspaceId?: string; limit?: number }) =>
     Effect.tryPromise(() => {
-      const q = db.select().from(events).$dynamic();
-      const filtered = opts?.intentId ? q.where(eq(events.intentId, opts.intentId)) : q;
-      return filtered.orderBy(desc(events.at)).limit(opts?.limit ?? 100);
+      let q = db.select().from(events).$dynamic();
+      if (opts?.intentId) q = q.where(eq(events.intentId, opts.intentId));
+      else if (opts?.workspaceId) q = q.where(eq(events.workspaceId, opts.workspaceId));
+      return q.orderBy(desc(events.at)).limit(opts?.limit ?? 100);
     }).pipe(Effect.orDie);
 
   /** Aggregate counts by event type — the analytics / ClickHouse read shape. */
