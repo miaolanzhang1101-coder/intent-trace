@@ -1,0 +1,21 @@
+{
+  "name": "intent-backend",
+  "version": "1.0.0",
+  "description": "Intent-level version control backend for AI-generated code edits (JavaAI / intent-trace)",
+  "type": "module",
+  "module": "src/main.ts",
+  "scripts": {
+    "start": "bun run src/main.ts",
+    "demo": "bun run src/demo.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.2.17",
+    "drizzle-orm": "^0.36.4",
+    "effect": "^3.12.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.1.14",
+    "typescript": "^5.7.2"
+  }
+}
