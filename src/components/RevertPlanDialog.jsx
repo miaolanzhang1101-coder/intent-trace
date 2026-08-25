@@ -1,10 +1,29 @@
 import { useEffect } from 'react'
 import { Rollback, Cascade, Warn, X, Spinner, File as FileIcon } from './icons'
 import { RiskPill } from './Badge'
+import DiffViewer from './DiffViewer'
+import { diffSnapshots } from '../lib/diff'
 
-// Renders the result of `POST /revert {dry_run:true}`. When the target is
-// blocked, the primary action becomes a cascade that reverts the dependents
-// first, in the exact order the plan lists.
+// Reverse-diff: what reverting THIS intent restores (after -> before), per hunk.
+function reverseDiffFiles(intent) {
+  const byPath = {}
+  for (const h of intent.hunks || []) {
+    byPath[h.path] = byPath[h.path] || { after: '', before: '' }
+  }
+  // Build a synthetic "current" (post-change) and "restored" (pre-change) per file,
+  // using each hunk's after/before text blocks.
+  const files = []
+  const paths = [...new Set((intent.hunks || []).map((h) => h.path))]
+  for (const path of paths) {
+    const hunks = (intent.hunks || []).filter((h) => h.path === path)
+    // current = concatenation of 'after' blocks; restored = 'before' blocks
+    const current = hunks.map((h) => h.after || '').join('\n').trim()
+    const restored = hunks.map((h) => h.before || '').join('\n').trim()
+    const d = diffSnapshots({ [path]: current }, { [path]: restored })
+    files.push(...d)
+  }
+  return files
+}
 
 export default function RevertPlanDialog({ plan, busy, onCancel, onConfirm }) {
   useEffect(() => {
@@ -18,7 +37,7 @@ export default function RevertPlanDialog({ plan, busy, onCancel, onConfirm }) {
 
   return (
     <div className="overlay" onMouseDown={(e) => { if (e.target === e.currentTarget && !busy) onCancel() }}>
-      <div className="modal" role="dialog" aria-modal="true">
+      <div className="modal modal--wide" role="dialog" aria-modal="true">
         <div className="modal__head">
           <span className={`modal__icon ${blocked ? 'modal__icon--danger' : ''}`}>
             {blocked ? <Cascade size={20} /> : <Rollback size={20} />}
@@ -65,6 +84,20 @@ export default function RevertPlanDialog({ plan, busy, onCancel, onConfirm }) {
                 </li>
               ))}
             </ol>
+          </div>
+
+          <div className="revert-preview">
+            <span className="micro-label">Preview — what reverting restores</span>
+            {wouldRevert.map((i) => {
+              const files = reverseDiffFiles(i)
+              if (!files.length) return null
+              return (
+                <div key={i.id} className="revert-preview__intent">
+                  <div className="revert-preview__name"><Rollback size={12} /> {i.title}</div>
+                  <DiffViewer files={files} title="" subtitle="" empty="No textual change." />
+                </div>
+              )
+            })}
           </div>
 
           <div className="revert-files">

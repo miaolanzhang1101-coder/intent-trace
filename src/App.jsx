@@ -10,11 +10,25 @@ import IntentGraph from './components/IntentGraph'
 import IntentInspector from './components/IntentInspector'
 import RevertPlanDialog from './components/RevertPlanDialog'
 import RunPanel from './components/RunPanel'
+import Landing from './components/Landing'
 import ActivityDock from './components/ActivityDock'
 import ToastStack from './components/Toast'
 import { Graph as GraphIcon, File as FileIcon, Beaker, Play, Spinner } from './components/icons'
 
 let toastSeq = 0
+
+function FlowBar({ selectedIntent, lastRun, running }) {
+  let cls = 'flowbar__step', text
+  if (running) text = 'Running tests\u2026'
+  else if (!selectedIntent) text = '1 \u00b7 Ask the agent for a change'
+  else if (selectedIntent.status === 'proposed') text = '2 \u00b7 Review the diff, then Apply & Run'
+  else if (lastRun && (lastRun.results || []).length && (lastRun.results || []).every((r) => r.pass)) { cls += ' flowbar__step--ok'; text = '\u2713 Tests passing \u2014 the change is safe (or Revert it)' }
+  else if (lastRun && (lastRun.results || []).some((r) => !r.pass)) { cls += ' flowbar__step--fail'; text = '\u2717 Tests failing \u2014 a recommended fix has been proposed' }
+  else text = 'Applied \u2014 press Run to verify'
+  return (
+    <div className="flowbar"><span className={cls}>{text}</span></div>
+  )
+}
 
 export default function App() {
   const [snap, setSnap] = useState({
@@ -38,6 +52,9 @@ export default function App() {
   const [applying, setApplying] = useState(false)
   const [reverting, setReverting] = useState(false)
   const [running, setRunning] = useState(false)
+  const [runPhase, setRunPhase] = useState(null)
+  const [runLog, setRunLog] = useState(null)
+  const [showLanding, setShowLanding] = useState(true)
 
   const [toasts, setToasts] = useState([])
   const pushToast = useCallback((t) => setToasts((ts) => [...ts, { id: ++toastSeq, ...t }]), [])
@@ -123,15 +140,41 @@ export default function App() {
     }
   }
 
+  /* ---------- recommend a fix when a run fails ---------- */
+  const proposeFix = async (failedIntent) => {
+    setAgentNote({ tone: 'warn', text: 'Tests are failing — asking the agent for a recommended fix…' })
+    const prompt = `The change "${failedIntent.title}" caused a test to fail. Propose a minimal follow-up edit that makes the test suite pass again.`
+    try {
+      const res = await api.planRequest(prompt)
+      if (!res.ok) {
+        setAgentNote({ tone: res.unmatched ? 'muted' : 'warn', text: res.reason ?? res.error ?? 'Could not propose a fix.' })
+        return
+      }
+      setProposalCache((prev) => ({ ...prev, [res.intent.id]: res.intent }))
+      setSelectedId(res.intent.id)
+      setView('diff')
+      setAgentNote({ tone: 'ok', text: `Recommended fix: “${res.intent.title}”. Review the diff, then apply.` })
+      await refresh()
+    } catch (err) {
+      setAgentNote({ tone: 'warn', text: String(err?.message ?? err) })
+    }
+  }
+
   /* ---------- apply ---------- */
   const onApply = async (intent, approve) => {
     setApplying(true)
     try {
-      await api.apply(intent.id, { approve })
+      const result = await api.apply(intent.id, { approve })
       await refresh()
-      pushToast({ tone: 'ok', msg: `Applied “${intent.title}”`, sub: 'Change written to the working tree' })
+      const failed = !!(result && (result.ok === false || (result.execution && result.execution.ok === false)))
+      pushToast(
+        failed
+          ? { tone: 'err', msg: `Applied “${intent.title}” — tests failing`, sub: 'Fetching a recommended fix…' }
+          : { tone: 'ok', msg: `Applied “${intent.title}”`, sub: 'Change written to the working tree' },
+      )
       setView('run')
-      await doRun()
+      await doRun({ fromApply: true, files: [...new Set((intent.hunks || []).map((h) => h.path))] })
+      if (failed) await proposeFix(intent)
     } catch (err) {
       if (err instanceof ApprovalRequired) {
         pushToast({ tone: 'err', msg: 'Approval required', sub: 'High-risk changes need explicit approval.' })
@@ -175,7 +218,7 @@ export default function App() {
       })
       setRevertPlan(null)
       setView('run')
-      await doRun()
+      await doRun({ fromApply: true, files: [...new Set((intent.hunks || []).map((h) => h.path))] })
     } catch (err) {
       if (err instanceof RevertBlocked) {
         // Refresh the plan so the dialog can escalate to cascade.
@@ -191,8 +234,22 @@ export default function App() {
   }
 
   /* ---------- run ---------- */
-  const doRun = async () => {
+  const doRun = async ({ fromApply = false, files = [] } = {}) => {
     setRunning(true)
+    setView('run')
+    const __t0 = Date.now()
+    const __steps = []
+    const __sync = () => setRunPhase({ steps: __steps.map((x) => ({ ...x })) })
+    const __push = (label) => { __steps.push({ label, status: 'active' }); __sync() }
+    const __settle = (status = 'done') => { if (__steps.length) __steps[__steps.length - 1].status = status; __sync() }
+    const __wait = (ms) => new Promise((r) => setTimeout(r, ms))
+    setRunPhase({ steps: [] })
+    if (fromApply) {
+      __push('Applying change'); await __wait(200); __settle()
+      for (const __f of files) { __push(`Writing ${__f}`); await __wait(150); __settle() }
+    }
+    __push('Reading test files'); await __wait(240); __settle()
+    __push('Running bun test\u2026')
     try {
       const response = await api.runTests()
       const execution = response?.execution
@@ -225,6 +282,11 @@ export default function App() {
         error: ok ? null : 'Test suite failed',
       }
 
+      const __elapsed = Date.now() - __t0
+      if (__elapsed < 1100) await __wait(1100 - __elapsed)
+      if (__steps.length) { __steps[__steps.length - 1].status = ok ? 'done' : 'fail'; __sync() }
+      await __wait(140)
+      setRunLog({ steps: __steps.map((x) => ({ ...x })), ok })
       setSnap((current) => ({
         ...current,
         runs: [...current.runs, run],
@@ -249,6 +311,8 @@ export default function App() {
       await refresh()
     } catch (error) {
       console.error('[JavaAI] test execution failed:', error)
+      if (__steps.length) { __steps[__steps.length - 1].status = 'fail'; __sync() }
+      setRunLog({ steps: __steps.map((x) => ({ ...x })), ok: false })
 
       setSnap((current) => ({
         ...current,
@@ -301,6 +365,7 @@ export default function App() {
 
   return (
     <div className="app app--workspace">
+      {showLanding && <Landing onStart={() => { setShowLanding(false); onRequest({ key: 'guard-divide' }) }} />}
       <Sidebar
         order={snap.order}
         activeFile={activeFile}
@@ -318,6 +383,7 @@ export default function App() {
         <div className="work">
           {/* Center: editor / diff / run + activity dock */}
           <div className="work__center">
+            <FlowBar selectedIntent={selectedIntent} lastRun={lastRun} running={running} />
             <div className="tabs">
               <button className={`tab ${view === 'editor' ? 'is-active' : ''}`} onClick={() => setView('editor')}>
                 <FileIcon size={14} /> Editor
@@ -327,7 +393,7 @@ export default function App() {
                 {selectedIntent && <span className="tab__dot" />}
               </button>
               <button className={`tab ${view === 'run' ? 'is-active' : ''}`} onClick={() => setView('run')}>
-                <Beaker size={14} /> Run
+                <Beaker size={14} /> Results
                 {lastRun && (
                   <span className={`tab__badge ${lastRun.ok && lastRun.results.every((r) => r.pass) ? 'ok' : 'fail'}`}>
                     {lastRun.results.filter((r) => r.pass).length}/{lastRun.results.length}
@@ -335,9 +401,9 @@ export default function App() {
                 )}
               </button>
               <div className="tabs__spacer" />
-              <button className="btn btn--primary tabs__run" onClick={doRun} disabled={running}>
-                {running ? <Spinner size={14} className="run__spin" /> : <Play size={14} />}
-                Run
+              <button className="btn btn--primary tabs__run" onClick={() => doRun()} disabled={running} aria-busy={running} aria-label="Run test suite">
+                {running ? <Spinner size={14} className="run__spin" /> : <Beaker size={14} />}
+                {running ? 'Testing…' : 'Test'}
               </button>
             </div>
 
@@ -372,7 +438,7 @@ export default function App() {
                 )
               )}
 
-              {view === 'run' && <RunPanel run={lastRun} running={running} onRun={doRun} />}
+              {view === 'run' && <RunPanel run={lastRun} running={running} phase={runPhase} log={runLog} impacted={selectedIntent ? [...new Set((selectedIntent.hunks || []).map((h) => h.path))] : []} preview={selectedIntent ? (selectedIntent.hunks || []).flatMap((h) => (h.after || '').split('\n')).filter((l) => l.length).slice(0, 24) : []} onRevert={selectedIntent && selectedIntent.status === 'applied' ? () => onRevert(selectedIntent) : null} />}
             </div>
 
             <ActivityDock events={snap.events} stats={snap.stats} />
@@ -390,6 +456,7 @@ export default function App() {
                 intents={snap.intents}
                 selectedId={selectedId}
                 onSelect={onSelectIntent}
+                highlight={revertPlan ? new Set(revertPlan.wouldRevert.map((i) => i.id)) : null}
               />
             </div>
             <div className="insppane">

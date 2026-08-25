@@ -77,7 +77,7 @@ export default function IntentInspector({ intent, intents, busy, onApply, onDisc
               onClick={() => onApply(intent, approve)}
             >
               {busy ? <Spinner size={15} className="run__spin" /> : <Play size={15} />}
-              {highRisk ? 'Approve & apply' : 'Apply change'}
+              {highRisk ? 'Approve & Run' : 'Apply & Run'}
             </button>
           </div>
           {highRisk && !approve && (

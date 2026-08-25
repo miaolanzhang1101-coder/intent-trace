@@ -44,7 +44,7 @@ const ensureProject = async () => {
     const projects = await request('/projects')
 
     if (projects?.length > 0) {
-      projectId = projects[0].id
+      projectId = projects[projects.length - 1].id
       return projectId
     }
 
@@ -185,10 +185,6 @@ export const api = {
         'Validate numeric inputs across add, subtract, multiply, and divide. Add a shared assertNumbers helper that rejects non-number values and NaN, call it from every operation, and add a test.',
       'add-power':
         'Add a power(base, exponent) function to calculator.js using Math.pow. Export the function and add a test verifying power(2, 5) returns 32.',
-      'add-percent':
-        'Add a percent(part, whole) function to calculator.js that returns divide(part, whole) multiplied by 100. Export it and add a test verifying percent(1, 4) returns 25.',
-      'add-percent-change':
-        'Add a percentChange(from, to) function to calculator.js that calculates percentage change using percent(to - from, from). Export it and add a test verifying percentChange(200, 250) returns 25.',
     }
 
     const rawText =
@@ -319,13 +315,15 @@ export const api = {
   },
 
   async reset() {
-    // No reset endpoint exists on the backend yet.
-    // Reloading the current project is the safest compatibility behavior.
+    // Start over: create a brand-new project and point the client at it.
     projectId = null
-
-    return {
-      ok: true,
-    }
+    projectPromise = null
+    const project = await request('/projects', {
+      method: 'POST',
+      body: JSON.stringify({ name: 'JavaAI Workspace', testCommand: 'bun test' }),
+    })
+    projectId = project.id
+    return { ok: true, projectId: project.id }
   },
 
   subscribe(fn) {

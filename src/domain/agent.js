@@ -1,3 +1,4 @@
+import { planWithModel } from './agent-model.js'
 // The agent turns a natural-language request into a concrete, applicable
 // *intent*: a semantic description of a change plus the real edits (hunks)
 // that carry it out, computed against the live files. Nothing here is faked —
@@ -225,34 +226,6 @@ const REQUESTS = [
     keywords: ['power', 'exponent', 'exponentiation', 'raise', 'pow'],
     transform: tPower,
   },
-  {
-    key: 'add-percent',
-    chip: 'Add percent() (needs divide guard)',
-    kind: 'api-change',
-    risk: 'high',
-    title: 'Add percent(part, whole) built on divide',
-    summary: 'Add percent() to the public API. It calls divide() and depends on the divide-by-zero guard.',
-    rationale:
-      'percent() divides by whole, so it inherits divide\'s behavior for a zero denominator. It must build on the guarded divide — otherwise percent(1, 0) silently yields Infinity. Because it changes the public surface and depends on another change, it is treated as high-risk and needs explicit approval.',
-    provides: 'percent',
-    requires: 'divide-guard',
-    keywords: ['percent', 'percentage', 'share', 'ratio', 'proportion'],
-    transform: tPercent,
-  },
-  {
-    key: 'add-percent-change',
-    chip: 'Add percentChange() (needs percent)',
-    kind: 'feature',
-    risk: 'medium',
-    title: 'Add percentChange(from, to) built on percent',
-    summary: 'Add percentChange(), which reuses percent() to measure growth between two values.',
-    rationale:
-      'percentChange builds one level higher on percent(), extending the dependency chain. It is useful for showing how a multi-step revert has to unwind in order.',
-    provides: 'percent-change',
-    requires: 'percent',
-    keywords: ['percent change', 'percentchange', 'growth', 'change', 'delta', 'increase'],
-    transform: tPercentChange,
-  },
 ]
 
 export const AGENT_CHIPS = REQUESTS.map((r) => ({ key: r.key, label: r.chip }))
@@ -286,15 +259,14 @@ function matchRequest(text) {
  * @param {object} ctx { files, applied: Intent[] }
  * @returns {{ ok:true, intent } | { ok:false, reason, unmatched? }}
  */
-export function planIntent(request, { files, applied }) {
+export async function planIntent(request, { files, applied }) {
   const def = typeof request === 'string' ? matchRequest(request) : findByKey(request.key)
   if (!def) {
-    return {
-      ok: false,
-      unmatched: true,
-      reason:
-        "I can't plan that one in this offline workspace yet. Try one of the suggested requests — each maps to a real, reviewable edit.",
-    }
+    // Free-text the local catalogue doesn't cover -> real model (same intent shape).
+    const text = typeof request === 'string' ? request : String(request?.text ?? '')
+    const res = await planWithModel(text, { files, applied })
+    if (!res.ok) return { ok: false, reason: res.reason, unmatched: true }
+    return res
   }
 
   // Resolve an explicit dependency to an applied intent, if the request needs one.

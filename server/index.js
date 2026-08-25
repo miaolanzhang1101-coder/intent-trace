@@ -290,7 +290,7 @@ async function handleCreateIntent(project, body) {
 
   const applied = appliedIntents(project.id)
 
-  const result = planIntent(text, {
+  const result = await planIntent(text, {
     files: project.files,
     applied,
   })
@@ -864,6 +864,7 @@ async function handleRequest(request) {
 
 const server = Bun.serve({
   port: PORT,
+  hostname: "0.0.0.0",
   fetch: handleRequest,
 })
 

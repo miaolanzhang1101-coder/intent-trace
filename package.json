@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server": "bun run server/index.js",
+    "start": "bun run server/index.js"
   },
   "dependencies": {
     "react": "^18.3.1",

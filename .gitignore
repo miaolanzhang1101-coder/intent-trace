@@ -1,8 +1,11 @@
 node_modules/
+dist/
 .env
 .env.*
 !.env.example
+
+server/.javaai-state.json
+server/*.bak
+*.bak
+
 .DS_Store
-dist/
-coverage/
-*.log
