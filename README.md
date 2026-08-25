@@ -1,128 +1,117 @@
-# intent-trace backend
+# JavaAI — Intent Trace
 
-The backend for **JavaAI / intent-trace** — an *intent-level version-control layer*
-over AI-generated code edits. Instead of tracking raw git commits, it tracks
-**intents**: high-level AI actions ("Fix type mismatch", "Update callers to new
-API", "Refactor SQL query") that group related edits into one reviewable,
-revertible decision, connected by a dependency DAG. Git commits attach to
-intents — not the other way around.
+A browser-based AI engineering workspace built around one complete, honest
+workflow:
 
-It exists to solve the two problems in the product brief:
+> **Natural-language request → inspect the Semantic Intent Graph → approve the change → run it → safely roll it back.**
 
-- **Risky rollbacks** — reverting an AI change blindly breaks hidden dependencies.
-  Here, a revert computes its blast radius first and either **blocks** or performs
-  an ordered **cascade**.
-- **Limited visibility** — developers can't see the scope/dependencies of AI
-  changes. Here, every intent exposes its `depends_on` and `required_by` sets
-  (direct + transitive), a graph view, per-intent diffs, and a full audit log.
-
-## Stack
-
-Built on the coherent slice of the target stack:
-
-- **TypeScript + Effect-TS on Bun** — the whole service layer is Effect
-  (`Layer` dependency injection, typed errors, `PubSub`, `Stream`, `ManagedRuntime`).
-- **Postgres + Drizzle** — schema and typed queries via Drizzle; the embedded
-  **PGlite** driver runs real Postgres in-process so it boots with zero infra.
-  Point `DATA_DIR` at a folder to persist, or swap the driver for hosted Postgres.
-- **Append-only event log** — every state transition is recorded (the
-  ClickHouse-shaped analytics stream; swap the sink in `services/Events.ts`).
-- **Realtime** — an SSE endpoint backed by an Effect `PubSub` (the seam where
-  Electric SQL would plug in for production sync).
+Everything runs in the browser with no server. You can actually write code, the
+tests actually execute in a sandboxed worker, and the agent's changes can be
+applied and reverted for real — including the hard case where a revert is
+*blocked* because other changes depend on it.
 
 ## Run it
 
 ```bash
-bun install
-bun run src/main.ts     # start the API on :3000  (PORT / DATA_DIR configurable)
-bun run src/demo.ts     # end-to-end scenario against the live HTTP server
-bun test                # unit tests for the DAG algorithms
+npm install
+npm run dev        # http://localhost:5173
 ```
 
-## API
+`npm run build` produces a static bundle in `dist/`. There are no runtime
+dependencies beyond React.
 
-| Method & path | Purpose |
-|---|---|
-| `GET  /health` | liveness |
-| `POST /projects` · `GET /projects` | create / list projects |
-| `GET  /projects/:id` | project metadata |
-| `POST /projects/:id/files` · `GET .../files` | upload / list stored files (versions kept in history) |
-| `GET  /projects/:id/files/content?path=` · `.../history?path=` | current file body · full version history |
-| `POST /projects/:id/prompts` | **agent**: `{text}` → a proposed intent with real edits, deps, risk |
-| `GET  /projects/:id/intents` · `.../graph` · `.../stream` | project-scoped list · graph · SSE |
-| `POST /intents` · `GET /intents?workspaceId=` | create / list intents |
-| `GET  /intents/graph` | nodes + edges for the Intent Graph visualization |
-| `GET  /intents/:id` | intent + edits + `dependsOn` + `required_by` + commits + executions |
-| `GET  /intents/:id/dependencies` | dependency panel: `depends_on` & `required_by`, direct + transitive |
-| `POST /intents/:id/dependencies` | add a dependency edge (rejects cycles) |
-| `POST /intents/:id/approve` | `proposed → approved`; `approve=true` required for high-risk (else `428`) |
-| `POST /intents/:id/execute` | `approved → executed`: snapshot state, apply edits to files, **run tests in the sandbox** |
-| `POST /intents/:id/revert` | `dry_run` (preview) and `cascade` (ordered rollback that restores file contents) |
-| `POST /intents/:id/commits` | attach a git commit to an intent |
-| `GET  /intents/:id/stream` | realtime SSE event stream for one intent |
-| `GET  /events` · `GET /stats` | audit log + analytics rollup |
+## The workflow, end to end
 
-Status lifecycle: **`proposed → approved → executed → reverted`**.
+1. **Ask.** Describe a change in the agent bar ("make divide throw on divide by
+   zero") or pick a suggested request. The agent replies with a **proposed
+   intent** — never a silent edit.
+2. **Inspect.** The proposal appears as a node in the **Semantic Intent Graph**
+   (columns are dependency depth, so independent work forms parallel branches).
+   The inspector surfaces the decision-critical information: intent, rationale,
+   affected modules / APIs / tests, code dependencies, required intents, risk,
+   and the full diff.
+3. **Approve & apply.** Low/medium-risk changes apply directly. **High-risk
+   changes are gated**: the Apply button stays disabled until you approve
+   (`approve=true`), mirroring `POST /apply`.
+4. **Run.** The suite executes for real in a Web Worker — genuine pass/fail,
+   console output, timing, and a watchdog that kills runaway loops. You can also
+   hand-edit any file in the editor and run it yourself.
+5. **Roll back.** Reverting an intent first does a **dry run** and shows the
+   plan: what would be undone (in revert order), which files are touched, and
+   whether it's **blocked**. If another applied intent depends on the target,
+   the standalone revert is refused and the escalation is a **cascade** that
+   unwinds the dependents first, in order.
 
-### The three verbs from the brief
+The starter project (`calculator.js` + `calculator.test.js`) is deliberately
+small so the whole loop is legible. The five sample requests form a real graph:
+`guard-divide → percent → percentChange` is a dependency chain, `power` is an
+independent branch, and `validate inputs` conflicts with the divide guard on the
+same symbol — so reverting the guard is blocked by both a dependency and a
+write-after-write, and a cascade cleanly unwinds them.
 
-- **`dry_run`** — `POST /intents/:id/revert {"dry_run": true}` returns the full plan
-  (`wouldRevert` in revert order, `requiredBy`, `affectedFiles`, `blocked`) and
-  mutates nothing. This powers the impact-preview UI.
-- **`cascade`** — `{"cascade": true}` reverts the target *and* every applied intent
-  that transitively depends on it, in dependents-first topological order.
-- **`required_by`** — the reverse dependency edges; a plain revert that would break
-  a non-empty `required_by` set returns `409 RevertBlocked` with that set attached.
+## The backend contract
 
-```bash
-# preview the blast radius of reverting an intent
-curl -XPOST localhost:3000/intents/$ID/revert -d '{"dry_run":true}'
-# safe ordered rollback of the intent and everything built on it
-curl -XPOST localhost:3000/intents/$ID/revert -d '{"cascade":true}'
-```
+The app talks to one module, `src/api/client.js`, a complete in-memory
+reference implementation. Each method documents the HTTP endpoint it stands in
+for — reimplement them against `fetch()` with the same return shapes to point at
+a real service.
+
+| Endpoint | Client method | Returns / behavior |
+| --- | --- | --- |
+| `GET /intents/graph` | `getIntentGraph()` | `{ intents, nodes, edges, columnCount, rowCount }` |
+| `POST /apply {approve}` | `apply(id, {approve})` | applies edits; **high-risk requires `approve=true`** (else `ApprovalRequired`) |
+| `POST /revert {dry_run}` | `revert(id, {dryRun:true})` | `{ wouldRevert, requiredBy, affectedFiles, blocked }` |
+| `POST /revert {cascade}` | `revert(id, {cascade})` | executes; a blocked target without `cascade` throws **`409 RevertBlocked`** with `required_by` |
+| `POST /run` | `run()` | executes the suite for real and records the result |
+| `GET /stream` (SSE) | `subscribe(fn)` | realtime event feed |
+| `GET /events` | `getEvents()` | the audit log |
+| `GET /stats` | `getStats()` | aggregate counters |
+| `PUT /files/:path` | `writeFile(path, content)` | a manual editor change |
+
+`ApprovalRequired` and `RevertBlocked` carry `.status` (403 / 409) and the data
+a UI needs (`.intent`, `.required_by`, `.plan`).
+
+## How a change is actually carried out
+
+Intents don't store whole-file snapshots; they store **hunks** — concrete
+`before`/`after` text with the symbol they touch. Applying runs them forward;
+reverting runs them backward, dependents-first. Because reverts are local and
+ordered, unrelated hand-edits are preserved, and a revert refuses cleanly (with
+a clear message) if the exact code it added was later changed by hand. The
+blocking rule is: an applied intent can't be reverted alone if anything still
+applied **depends on it** or edits the **same symbol after it**.
 
 ## Layout
 
 ```
 src/
-  db/        schema.ts (Drizzle: intents, edits, deps, projects, files, snapshots, executions, events)
-             migrate.ts (idempotent DDL) · via Db service
-  domain/    errors.ts (typed failures) · graph.ts (pure DAG) · diff.ts (unified diff)
-  services/  Db · Events (audit log + PubSub) · Projects (file storage + versions)
-             Agent (NL prompt → real edits) · Sandbox (runs tests in a temp dir)
-             Intents (propose/approve/execute/revert/deps/graph + snapshots)
-  http/      server.ts (Bun.serve → Effect) · http.ts (error→status mapping)
-  runtime.ts root Layer wiring (one shared PGlite, memoized) · main.ts · demo.ts
-test/        graph.test.ts
+  api/client.js              the backend contract + in-memory reference engine
+  domain/
+    project.js               the starter workspace files (real, runnable)
+    agent.js                 natural-language → reviewable intents (real edits)
+    intents.js               apply/revert, the revert planner, graph layout, stats
+  runtime/runner.js          real code execution in a sandboxed Web Worker
+  components/
+    AgentBar.jsx             the request input + suggestions
+    IntentGraph.jsx          the Semantic Intent Graph (GET /intents/graph)
+    IntentInspector.jsx      intent · rationale · impact · risk · approval gate
+    RevertPlanDialog.jsx     dry-run plan → blocked → cascade
+    CodeEditor.jsx           dependency-free editable, highlighted editor
+    RunPanel.jsx             real test results + console
+    ActivityDock.jsx         Stream / Audit / Stats
+    DiffViewer.jsx           file diffs with single-pass highlighting
+    Sidebar.jsx TopBar.jsx Toast.jsx Badge.jsx icons.jsx
+  lib/diff.js                dependency-free line diff + context collapsing
+  App.jsx                    the workflow
 ```
 
-## The full agent loop
+## Notes
 
-`src/demo.ts` runs the whole thing end-to-end: create a project + files → the agent
-proposes an intent from a natural-language prompt → approve → **execute** (edits are
-applied to the stored files and the test suite is actually run in a sandbox) → a
-dependent intent auto-links by file overlap → a plain revert of the base intent is
-**blocked (409)** → a **cascade** revert rolls back the dependent and the base in
-dependency-safe order and restores `src/user.ts` to its original bytes.
-
-## Frontend
-
-The `intent-frontend/` folder ships a single-file **Rollback Console** (`index.html`)
-that connects to this backend over HTTP + SSE — a Semantic Intent Graph, dry-run
-impact previews, and one-click cascade rollback. Just open the file in a browser;
-no build step. See its README to connect or run the offline demo.
-
-## What's intentionally a seam, not a fake
-
-The pieces that need hosted infra are abstracted behind a single service so they
-swap cleanly without touching domain logic:
-
-- **PGlite → hosted Postgres**: change the driver in `services/Db.ts`; Drizzle
-  schema/queries are unchanged. Run `drizzle-kit generate` for versioned migrations.
-- **event log → ClickHouse**: `Events.emit` is the one write path; point it at a
-  ClickHouse sink for the high-throughput analytics store.
-- **SSE `PubSub` → Electric SQL**: `Events.stream` is the one read path for
-  realtime; replace it with an Electric shape subscription.
-- **sandboxes/LLM (e2b, Anthropic)**: intents currently carry agent-supplied
-  `reasoning` + `edits`; the producer (agent harness executing tools in an e2b
-  sandbox) attaches to `POST /intents` without backend changes.
+- No CSS framework — one `src/index.css` holds the design tokens and every
+  component style. The palette (indigo for apply, amber for rollback) and type
+  are unchanged from the original console.
+- The test runner implements a small Jest-style `test` / `expect` and a minimal
+  CommonJS `require` between the project's own files — enough to run a real
+  suite, killed by a 3s watchdog if code hangs.
+- Keyboard: `Esc` closes the revert dialog; `Tab` inserts two spaces in the
+  editor.

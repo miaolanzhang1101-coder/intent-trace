@@ -1,0 +1,1031 @@
+{
+  "projects": [
+    {
+      "id": "prj-mt8fb922-1",
+      "name": "JavaAI Workspace",
+      "testCommand": "bun test",
+      "files": {
+        "calculator.js": "// calculator.js — a small math module.\n// Every function here runs for real when you press Run.\n\nfunction add(a, b) {\n  return a + b;\n}\n\nfunction subtract(a, b) {\n  return a - b;\n}\n\nfunction multiply(a, b) {\n  return a * b;\n}\n\nfunction divide(a, b) {\n  if (b === 0) {\n    throw new Error('Cannot divide by zero');\n  }\n  return a / b;\n}\n\nmodule.exports = { add, subtract, multiply, divide };\n\nfunction percent(part, whole) {\n  return divide(part, whole) * 100;\n}\nmodule.exports.percent = percent;\n\nfunction percent(part, whole) {\n  return divide(part, whole) * 100;\n}\nmodule.exports.percent = percent;\n\nfunction percentChange(from, to) {\n  return percent(to - from, from);\n}\nmodule.exports.percentChange = percentChange;\n",
+        "calculator.test.js": "// calculator.test.js — a tiny Jest-style test suite.\n// test(name, fn) and expect(value) are provided by the runner.\n\nconst calc = require('./calculator');\n\ntest('add sums two numbers', () => {\n  expect(calc.add(2, 3)).toBe(5);\n});\n\ntest('subtract finds the difference', () => {\n  expect(calc.subtract(10, 4)).toBe(6);\n});\n\ntest('multiply scales two numbers', () => {\n  expect(calc.multiply(3, 4)).toBe(12);\n});\n\ntest('divide splits a into b parts', () => {\n  expect(calc.divide(12, 3)).toBe(4);\n});\n\ntest('divide throws when dividing by zero', () => {\n  expect(() => calc.divide(1, 0)).toThrow('Cannot divide by zero');\n});\n\ntest('percent expresses part as a share of whole', () => {\n  expect(calc.percent(1, 4)).toBe(25);\n});\n\ntest('percent expresses part as a share of whole', () => {\n  expect(calc.percent(1, 4)).toBe(25);\n});\n\ntest('percentChange measures growth between two values', () => {\n  expect(calc.percentChange(200, 250)).toBe(25);\n});\n"
+      },
+      "createdAt": 1787647746460,
+      "executions": [
+        {
+          "id": "exec-mt8gg6x9-f",
+          "intentId": null,
+          "projectId": "prj-mt8fb922-1",
+          "status": "passed",
+          "startedAt": 1787649656589,
+          "finishedAt": 1787649656608,
+          "ok": true,
+          "exitCode": 0,
+          "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+          "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.03ms]\n(pass) subtract finds the difference [0.01ms]\n(pass) multiply scales two numbers [0.01ms]\n(pass) divide splits a into b parts [0.02ms]\n(pass) divide throws when dividing by zero [0.06ms]\n(pass) percent expresses part as a share of whole [0.01ms]\n(pass) percent expresses part as a share of whole\n(pass) percentChange measures growth between two values\n\n 8 pass\n 0 fail\n 8 expect() calls\nRan 8 tests across 1 file. [8.00ms]\n",
+          "durationMs": 19
+        },
+        {
+          "id": "exec-mt8gg6vx-e",
+          "intentId": "int-mt8gg4cf-7",
+          "projectId": "prj-mt8fb922-1",
+          "status": "passed",
+          "startedAt": 1787649656541,
+          "finishedAt": 1787649656583,
+          "ok": true,
+          "exitCode": 0,
+          "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+          "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.05ms]\n(pass) subtract finds the difference [0.02ms]\n(pass) multiply scales two numbers [0.02ms]\n(pass) divide splits a into b parts [0.03ms]\n(pass) divide throws when dividing by zero [0.13ms]\n(pass) percent expresses part as a share of whole [0.03ms]\n(pass) percent expresses part as a share of whole [0.01ms]\n(pass) percentChange measures growth between two values [0.02ms]\n\n 8 pass\n 0 fail\n 8 expect() calls\nRan 8 tests across 1 file. [13.00ms]\n",
+          "durationMs": 39
+        },
+        {
+          "id": "exec-mt8gg008-d",
+          "intentId": null,
+          "projectId": "prj-mt8fb922-1",
+          "status": "passed",
+          "startedAt": 1787649647624,
+          "finishedAt": 1787649647638,
+          "ok": true,
+          "exitCode": 0,
+          "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+          "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.04ms]\n(pass) subtract finds the difference [0.02ms]\n(pass) multiply scales two numbers [0.02ms]\n(pass) divide splits a into b parts [0.02ms]\n(pass) divide throws when dividing by zero [0.08ms]\n(pass) percent expresses part as a share of whole [0.02ms]\n(pass) percent expresses part as a share of whole\n\n 7 pass\n 0 fail\n 7 expect() calls\nRan 7 tests across 1 file. [6.00ms]\n",
+          "durationMs": 14
+        },
+        {
+          "id": "exec-mt8gfzyu-c",
+          "intentId": "int-mt8gdggz-6",
+          "projectId": "prj-mt8fb922-1",
+          "status": "passed",
+          "startedAt": 1787649647574,
+          "finishedAt": 1787649647614,
+          "ok": true,
+          "exitCode": 0,
+          "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+          "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.04ms]\n(pass) subtract finds the difference [0.01ms]\n(pass) multiply scales two numbers [0.01ms]\n(pass) divide splits a into b parts [0.03ms]\n(pass) divide throws when dividing by zero [0.15ms]\n(pass) percent expresses part as a share of whole [0.02ms]\n(pass) percent expresses part as a share of whole\n\n 7 pass\n 0 fail\n 7 expect() calls\nRan 7 tests across 1 file. [16.00ms]\n",
+          "durationMs": 38
+        },
+        {
+          "id": "exec-mt8gfm2m-b",
+          "intentId": "int-mt8g638g-3",
+          "projectId": "prj-mt8fb922-1",
+          "status": "failed",
+          "startedAt": 1787649629566,
+          "finishedAt": 1787649629568,
+          "ok": false,
+          "exitCode": null,
+          "stdout": "",
+          "stderr": "Can't apply cleanly to calculator.js: the target code changed since this was planned.",
+          "durationMs": 2
+        },
+        {
+          "id": "exec-mt8gdkfl-a",
+          "intentId": null,
+          "projectId": "prj-mt8fb922-1",
+          "status": "passed",
+          "startedAt": 1787649534129,
+          "finishedAt": 1787649534150,
+          "ok": true,
+          "exitCode": 0,
+          "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+          "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.03ms]\n(pass) subtract finds the difference\n(pass) multiply scales two numbers\n(pass) divide splits a into b parts [0.02ms]\n(pass) divide throws when dividing by zero [0.05ms]\n(pass) percent expresses part as a share of whole\n\n 6 pass\n 0 fail\n 6 expect() calls\nRan 6 tests across 1 file. [10.00ms]\n",
+          "durationMs": 21
+        },
+        {
+          "id": "exec-mt8gdkek-9",
+          "intentId": "int-mt8gdggz-6",
+          "projectId": "prj-mt8fb922-1",
+          "status": "passed",
+          "startedAt": 1787649534092,
+          "finishedAt": 1787649534120,
+          "ok": true,
+          "exitCode": 0,
+          "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+          "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.03ms]\n(pass) subtract finds the difference [0.01ms]\n(pass) multiply scales two numbers\n(pass) divide splits a into b parts [0.02ms]\n(pass) divide throws when dividing by zero [0.06ms]\n(pass) percent expresses part as a share of whole [0.01ms]\n\n 6 pass\n 0 fail\n 6 expect() calls\nRan 6 tests across 1 file. [10.00ms]\n",
+          "durationMs": 25
+        },
+        {
+          "id": "exec-mt8gdeis-8",
+          "intentId": null,
+          "projectId": "prj-mt8fb922-1",
+          "status": "passed",
+          "startedAt": 1787649526468,
+          "finishedAt": 1787649526486,
+          "ok": true,
+          "exitCode": 0,
+          "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+          "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.04ms]\n(pass) subtract finds the difference [0.02ms]\n(pass) multiply scales two numbers [0.02ms]\n(pass) divide splits a into b parts [0.03ms]\n(pass) divide throws when dividing by zero [0.12ms]\n\n 5 pass\n 0 fail\n 5 expect() calls\nRan 5 tests across 1 file. [7.00ms]\n",
+          "durationMs": 18
+        },
+        {
+          "id": "exec-mt8gdeh7-7",
+          "intentId": "int-mt8gd9vy-5",
+          "projectId": "prj-mt8fb922-1",
+          "status": "passed",
+          "startedAt": 1787649526411,
+          "finishedAt": 1787649526450,
+          "ok": true,
+          "exitCode": 0,
+          "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+          "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.04ms]\n(pass) subtract finds the difference [0.01ms]\n(pass) multiply scales two numbers [0.01ms]\n(pass) divide splits a into b parts [0.02ms]\n(pass) divide throws when dividing by zero [0.06ms]\n\n 5 pass\n 0 fail\n 5 expect() calls\nRan 5 tests across 1 file. [18.00ms]\n",
+          "durationMs": 37
+        },
+        {
+          "id": "exec-mt8g5ts7-5",
+          "intentId": null,
+          "projectId": "prj-mt8fb922-1",
+          "status": "passed",
+          "startedAt": 1787649172999,
+          "finishedAt": 1787649173033,
+          "ok": true,
+          "exitCode": 0,
+          "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+          "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.02ms]\n(pass) subtract finds the difference [0.01ms]\n(pass) multiply scales two numbers\n(pass) divide splits a into b parts\n\n 4 pass\n 0 fail\n 4 expect() calls\nRan 4 tests across 1 file. [18.00ms]\n",
+          "durationMs": 34
+        },
+        {
+          "id": "exec-mt8g5ny9-4",
+          "intentId": null,
+          "projectId": "prj-mt8fb922-1",
+          "status": "passed",
+          "startedAt": 1787649165441,
+          "finishedAt": 1787649165474,
+          "ok": true,
+          "exitCode": 0,
+          "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+          "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.04ms]\n(pass) subtract finds the difference [0.03ms]\n(pass) multiply scales two numbers [0.02ms]\n(pass) divide splits a into b parts [0.02ms]\n\n 4 pass\n 0 fail\n 4 expect() calls\nRan 4 tests across 1 file. [16.00ms]\n",
+          "durationMs": 32
+        },
+        {
+          "id": "exec-mt8g5m64-3",
+          "intentId": null,
+          "projectId": "prj-mt8fb922-1",
+          "status": "passed",
+          "startedAt": 1787649163132,
+          "finishedAt": 1787649163184,
+          "ok": true,
+          "exitCode": 0,
+          "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+          "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.19ms]\n(pass) subtract finds the difference [0.02ms]\n(pass) multiply scales two numbers [0.01ms]\n(pass) divide splits a into b parts [0.17ms]\n\n 4 pass\n 0 fail\n 4 expect() calls\nRan 4 tests across 1 file. [28.00ms]\n",
+          "durationMs": 52
+        }
+      ]
+    },
+    {
+      "id": "prj-mt8fvajr-2",
+      "name": "demo",
+      "testCommand": "bun test",
+      "files": {
+        "calculator.js": "// calculator.js — a small math module.\n// Every function here runs for real when you press Run.\n\nfunction add(a, b) {\n  return a + b;\n}\n\nfunction subtract(a, b) {\n  return a - b;\n}\n\nfunction multiply(a, b) {\n  return a * b;\n}\n\nfunction divide(a, b) {\n  return a / b;\n}\n\nmodule.exports = { add, subtract, multiply, divide };\n",
+        "calculator.test.js": "// calculator.test.js — a tiny Jest-style test suite.\n// test(name, fn) and expect(value) are provided by the runner.\n\nconst calc = require('./calculator');\n\ntest('add sums two numbers', () => {\n  expect(calc.add(2, 3)).toBe(5);\n});\n\ntest('subtract finds the difference', () => {\n  expect(calc.subtract(10, 4)).toBe(6);\n});\n\ntest('multiply scales two numbers', () => {\n  expect(calc.multiply(3, 4)).toBe(12);\n});\n\ntest('divide splits a into b parts', () => {\n  expect(calc.divide(12, 3)).toBe(4);\n});\n"
+      },
+      "createdAt": 1787648681512
+    },
+    {
+      "id": "prj-mt8fys77-1",
+      "name": "demo",
+      "testCommand": "bun test",
+      "files": {
+        "calculator.js": "// calculator.js — a small math module.\n// Every function here runs for real when you press Run.\n\nfunction add(a, b) {\n  return a + b;\n}\n\nfunction subtract(a, b) {\n  return a - b;\n}\n\nfunction multiply(a, b) {\n  return a * b;\n}\n\nfunction divide(a, b) {\n  return a / b;\n}\n\nmodule.exports = { add, subtract, multiply, divide };\n",
+        "calculator.test.js": "// calculator.test.js — a tiny Jest-style test suite.\n// test(name, fn) and expect(value) are provided by the runner.\n\nconst calc = require('./calculator');\n\ntest('add sums two numbers', () => {\n  expect(calc.add(2, 3)).toBe(5);\n});\n\ntest('subtract finds the difference', () => {\n  expect(calc.subtract(10, 4)).toBe(6);\n});\n\ntest('multiply scales two numbers', () => {\n  expect(calc.multiply(3, 4)).toBe(12);\n});\n\ntest('divide splits a into b parts', () => {\n  expect(calc.divide(12, 3)).toBe(4);\n});\n"
+      },
+      "createdAt": 1787648844355
+    },
+    {
+      "id": "prj-mt8g25le-1",
+      "name": "demo",
+      "testCommand": "bun test",
+      "files": {
+        "calculator.js": "// calculator.js — a small math module.\n// Every function here runs for real when you press Run.\n\nfunction add(a, b) {\n  return a + b;\n}\n\nfunction subtract(a, b) {\n  return a - b;\n}\n\nfunction multiply(a, b) {\n  return a * b;\n}\n\nfunction divide(a, b) {\n  if (b === 0) {\n    throw new Error('Cannot divide by zero');\n  }\n  return a / b;\n}\n\nmodule.exports = { add, subtract, multiply, divide };\n",
+        "calculator.test.js": "// calculator.test.js — a tiny Jest-style test suite.\n// test(name, fn) and expect(value) are provided by the runner.\n\nconst calc = require('./calculator');\n\ntest('add sums two numbers', () => {\n  expect(calc.add(2, 3)).toBe(5);\n});\n\ntest('subtract finds the difference', () => {\n  expect(calc.subtract(10, 4)).toBe(6);\n});\n\ntest('multiply scales two numbers', () => {\n  expect(calc.multiply(3, 4)).toBe(12);\n});\n\ntest('divide splits a into b parts', () => {\n  expect(calc.divide(12, 3)).toBe(4);\n});\n\ntest('divide throws when dividing by zero', () => {\n  expect(() => calc.divide(1, 0)).toThrow('Cannot divide by zero');\n});\n"
+      },
+      "createdAt": 1787649001683,
+      "executions": [
+        {
+          "id": "exec-mt8g25n6-1",
+          "intentId": "int-mt8g25mf-0",
+          "projectId": "prj-mt8g25le-1",
+          "status": "passed",
+          "startedAt": 1787649001746,
+          "finishedAt": 1787649001787,
+          "ok": true,
+          "exitCode": 0,
+          "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+          "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.19ms]\n(pass) subtract finds the difference\n(pass) multiply scales two numbers\n(pass) divide splits a into b parts [0.16ms]\n(pass) divide throws when dividing by zero [1.37ms]\n\n 5 pass\n 0 fail\n 5 expect() calls\nRan 5 tests across 1 file. [24.00ms]\n",
+          "durationMs": 39
+        }
+      ]
+    },
+    {
+      "id": "prj-mt8g4jab-2",
+      "name": "demo",
+      "testCommand": "bun test",
+      "files": {
+        "calculator.js": "// calculator.js — a small math module.\n// Every function here runs for real when you press Run.\n\nfunction add(a, b) {\n  return a + b;\n}\n\nfunction subtract(a, b) {\n  return a - b;\n}\n\nfunction multiply(a, b) {\n  return a * b;\n}\n\nfunction divide(a, b) {\n  return a / b;\n}\n\nmodule.exports = { add, subtract, multiply, divide };\n",
+        "calculator.test.js": "// calculator.test.js — a tiny Jest-style test suite.\n// test(name, fn) and expect(value) are provided by the runner.\n\nconst calc = require('./calculator');\n\ntest('add sums two numbers', () => {\n  expect(calc.add(2, 3)).toBe(5);\n});\n\ntest('subtract finds the difference', () => {\n  expect(calc.subtract(10, 4)).toBe(6);\n});\n\ntest('multiply scales two numbers', () => {\n  expect(calc.multiply(3, 4)).toBe(12);\n});\n\ntest('divide splits a into b parts', () => {\n  expect(calc.divide(12, 3)).toBe(4);\n});\n"
+      },
+      "createdAt": 1787649112739,
+      "executions": [
+        {
+          "id": "exec-mt8g4jcv-2",
+          "intentId": "int-mt8g4jbv-1",
+          "projectId": "prj-mt8g4jab-2",
+          "status": "passed",
+          "startedAt": 1787649112831,
+          "finishedAt": 1787649112843,
+          "ok": true,
+          "exitCode": 0,
+          "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+          "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.02ms]\n(pass) subtract finds the difference\n(pass) multiply scales two numbers\n(pass) divide splits a into b parts [0.01ms]\n(pass) divide throws when dividing by zero [0.04ms]\n\n 5 pass\n 0 fail\n 5 expect() calls\nRan 5 tests across 1 file. [5.00ms]\n",
+          "durationMs": 12
+        }
+      ]
+    },
+    {
+      "id": "prj-mt8gcamc-3",
+      "name": "demo",
+      "testCommand": "bun test",
+      "files": {
+        "calculator.js": "// calculator.js — a small math module.\n// Every function here runs for real when you press Run.\n\nfunction add(a, b) {\n  return a + b;\n}\n\nfunction subtract(a, b) {\n  return a - b;\n}\n\nfunction multiply(a, b) {\n  return a * b;\n}\n\nfunction divide(a, b) {\n  if (b === 0) {\n    throw new Error('Cannot divide by zero');\n  }\n  return a / b;\n}\n\nmodule.exports = { add, subtract, multiply, divide };\n",
+        "calculator.test.js": "// calculator.test.js — a tiny Jest-style test suite.\n// test(name, fn) and expect(value) are provided by the runner.\n\nconst calc = require('./calculator');\n\ntest('add sums two numbers', () => {\n  expect(calc.add(2, 3)).toBe(5);\n});\n\ntest('subtract finds the difference', () => {\n  expect(calc.subtract(10, 4)).toBe(6);\n});\n\ntest('multiply scales two numbers', () => {\n  expect(calc.multiply(3, 4)).toBe(12);\n});\n\ntest('divide splits a into b parts', () => {\n  expect(calc.divide(12, 3)).toBe(4);\n});\n\ntest('divide throws when dividing by zero', () => {\n  expect(() => calc.divide(1, 0)).toThrow('Cannot divide by zero');\n});\n"
+      },
+      "createdAt": 1787649474757,
+      "executions": [
+        {
+          "id": "exec-mt8gcaoz-6",
+          "intentId": "int-mt8gcanz-4",
+          "projectId": "prj-mt8gcamc-3",
+          "status": "passed",
+          "startedAt": 1787649474851,
+          "finishedAt": 1787649474888,
+          "ok": true,
+          "exitCode": 0,
+          "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+          "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.16ms]\n(pass) subtract finds the difference\n(pass) multiply scales two numbers\n(pass) divide splits a into b parts [0.16ms]\n(pass) divide throws when dividing by zero [1.25ms]\n\n 5 pass\n 0 fail\n 5 expect() calls\nRan 5 tests across 1 file. [24.00ms]\n",
+          "durationMs": 35
+        }
+      ]
+    }
+  ],
+  "intents": [
+    {
+      "id": "int-mt8fvakq-0",
+      "key": "guard-divide",
+      "provides": "divide-guard",
+      "title": "Guard divide against division by zero",
+      "summary": "Make divide(a, b) throw a clear error instead of returning Infinity when b is 0.",
+      "rationale": "divide currently returns Infinity for a zero denominator, which propagates silently into callers and corrupts downstream math. Throwing at the boundary surfaces the mistake where it happens and is the precondition other numeric features build on.",
+      "kind": "bugfix",
+      "risk": "medium",
+      "status": "proposed",
+      "dependsOn": [],
+      "hunks": [
+        {
+          "path": "calculator.js",
+          "symbol": "divide",
+          "op": "replace",
+          "before": "function divide(a, b) {\n  return a / b;\n}",
+          "after": "function divide(a, b) {\n  if (b === 0) {\n    throw new Error('Cannot divide by zero');\n  }\n  return a / b;\n}"
+        },
+        {
+          "path": "calculator.test.js",
+          "symbol": "test:divide-zero",
+          "op": "append",
+          "before": "",
+          "after": "\ntest('divide throws when dividing by zero', () => {\n  expect(() => calc.divide(1, 0)).toThrow('Cannot divide by zero');\n});\n"
+        }
+      ],
+      "symbols": {
+        "calculator.js": [
+          "divide"
+        ],
+        "calculator.test.js": [
+          "test:divide-zero"
+        ]
+      },
+      "affects": {
+        "modules": [
+          "calculator.js"
+        ],
+        "apis": [
+          "divide(a, b)"
+        ],
+        "tests": [
+          "calculator.test.js — adds \"divide by zero\" case"
+        ],
+        "dependencies": [
+          "Error"
+        ]
+      },
+      "createdAt": 1787648681546,
+      "projectId": "prj-mt8fvajr-2",
+      "approvedAt": null,
+      "appliedAt": null,
+      "revertedAt": null,
+      "executions": []
+    },
+    {
+      "id": "int-mt8fys8s-0",
+      "key": "guard-divide",
+      "provides": "divide-guard",
+      "title": "Guard divide against division by zero",
+      "summary": "Make divide(a, b) throw a clear error instead of returning Infinity when b is 0.",
+      "rationale": "divide currently returns Infinity for a zero denominator, which propagates silently into callers and corrupts downstream math. Throwing at the boundary surfaces the mistake where it happens and is the precondition other numeric features build on.",
+      "kind": "bugfix",
+      "risk": "medium",
+      "status": "approved",
+      "dependsOn": [],
+      "hunks": [
+        {
+          "path": "calculator.js",
+          "symbol": "divide",
+          "op": "replace",
+          "before": "function divide(a, b) {\n  return a / b;\n}",
+          "after": "function divide(a, b) {\n  if (b === 0) {\n    throw new Error('Cannot divide by zero');\n  }\n  return a / b;\n}"
+        },
+        {
+          "path": "calculator.test.js",
+          "symbol": "test:divide-zero",
+          "op": "append",
+          "before": "",
+          "after": "\ntest('divide throws when dividing by zero', () => {\n  expect(() => calc.divide(1, 0)).toThrow('Cannot divide by zero');\n});\n"
+        }
+      ],
+      "symbols": {
+        "calculator.js": [
+          "divide"
+        ],
+        "calculator.test.js": [
+          "test:divide-zero"
+        ]
+      },
+      "affects": {
+        "modules": [
+          "calculator.js"
+        ],
+        "apis": [
+          "divide(a, b)"
+        ],
+        "tests": [
+          "calculator.test.js — adds \"divide by zero\" case"
+        ],
+        "dependencies": [
+          "Error"
+        ]
+      },
+      "createdAt": 1787648844412,
+      "projectId": "prj-mt8fys77-1",
+      "approvedAt": 1787648844435,
+      "appliedAt": null,
+      "revertedAt": null,
+      "executions": []
+    },
+    {
+      "id": "int-mt8g25mf-0",
+      "key": "guard-divide",
+      "provides": "divide-guard",
+      "title": "Guard divide against division by zero",
+      "summary": "Make divide(a, b) throw a clear error instead of returning Infinity when b is 0.",
+      "rationale": "divide currently returns Infinity for a zero denominator, which propagates silently into callers and corrupts downstream math. Throwing at the boundary surfaces the mistake where it happens and is the precondition other numeric features build on.",
+      "kind": "bugfix",
+      "risk": "medium",
+      "status": "applied",
+      "dependsOn": [],
+      "hunks": [
+        {
+          "path": "calculator.js",
+          "symbol": "divide",
+          "op": "replace",
+          "before": "function divide(a, b) {\n  return a / b;\n}",
+          "after": "function divide(a, b) {\n  if (b === 0) {\n    throw new Error('Cannot divide by zero');\n  }\n  return a / b;\n}"
+        },
+        {
+          "path": "calculator.test.js",
+          "symbol": "test:divide-zero",
+          "op": "append",
+          "before": "",
+          "after": "\ntest('divide throws when dividing by zero', () => {\n  expect(() => calc.divide(1, 0)).toThrow('Cannot divide by zero');\n});\n"
+        }
+      ],
+      "symbols": {
+        "calculator.js": [
+          "divide"
+        ],
+        "calculator.test.js": [
+          "test:divide-zero"
+        ]
+      },
+      "affects": {
+        "modules": [
+          "calculator.js"
+        ],
+        "apis": [
+          "divide(a, b)"
+        ],
+        "tests": [
+          "calculator.test.js — adds \"divide by zero\" case"
+        ],
+        "dependencies": [
+          "Error"
+        ]
+      },
+      "createdAt": 1787649001720,
+      "projectId": "prj-mt8g25le-1",
+      "approvedAt": 1787649001736,
+      "appliedAt": 1787649001747,
+      "revertedAt": null,
+      "executions": []
+    },
+    {
+      "id": "int-mt8g4jbv-1",
+      "key": "guard-divide",
+      "provides": "divide-guard",
+      "title": "Guard divide against division by zero",
+      "summary": "Make divide(a, b) throw a clear error instead of returning Infinity when b is 0.",
+      "rationale": "divide currently returns Infinity for a zero denominator, which propagates silently into callers and corrupts downstream math. Throwing at the boundary surfaces the mistake where it happens and is the precondition other numeric features build on.",
+      "kind": "bugfix",
+      "risk": "medium",
+      "status": "reverted",
+      "dependsOn": [],
+      "hunks": [
+        {
+          "path": "calculator.js",
+          "symbol": "divide",
+          "op": "replace",
+          "before": "function divide(a, b) {\n  return a / b;\n}",
+          "after": "function divide(a, b) {\n  if (b === 0) {\n    throw new Error('Cannot divide by zero');\n  }\n  return a / b;\n}"
+        },
+        {
+          "path": "calculator.test.js",
+          "symbol": "test:divide-zero",
+          "op": "append",
+          "before": "",
+          "after": "\ntest('divide throws when dividing by zero', () => {\n  expect(() => calc.divide(1, 0)).toThrow('Cannot divide by zero');\n});\n"
+        }
+      ],
+      "symbols": {
+        "calculator.js": [
+          "divide"
+        ],
+        "calculator.test.js": [
+          "test:divide-zero"
+        ]
+      },
+      "affects": {
+        "modules": [
+          "calculator.js"
+        ],
+        "apis": [
+          "divide(a, b)"
+        ],
+        "tests": [
+          "calculator.test.js — adds \"divide by zero\" case"
+        ],
+        "dependencies": [
+          "Error"
+        ]
+      },
+      "createdAt": 1787649112795,
+      "projectId": "prj-mt8g4jab-2",
+      "approvedAt": 1787649112821,
+      "appliedAt": 1787649112831,
+      "revertedAt": 1787649112872,
+      "executions": []
+    },
+    {
+      "id": "int-mt8g5i3l-2",
+      "key": "guard-divide",
+      "provides": "divide-guard",
+      "title": "Guard divide against division by zero",
+      "summary": "Make divide(a, b) throw a clear error instead of returning Infinity when b is 0.",
+      "rationale": "divide currently returns Infinity for a zero denominator, which propagates silently into callers and corrupts downstream math. Throwing at the boundary surfaces the mistake where it happens and is the precondition other numeric features build on.",
+      "kind": "bugfix",
+      "risk": "medium",
+      "status": "approved",
+      "dependsOn": [],
+      "hunks": [
+        {
+          "path": "calculator.js",
+          "symbol": "divide",
+          "op": "replace",
+          "before": "function divide(a, b) {\n  return a / b;\n}",
+          "after": "function divide(a, b) {\n  if (b === 0) {\n    throw new Error('Cannot divide by zero');\n  }\n  return a / b;\n}"
+        },
+        {
+          "path": "calculator.test.js",
+          "symbol": "test:divide-zero",
+          "op": "append",
+          "before": "",
+          "after": "\ntest('divide throws when dividing by zero', () => {\n  expect(() => calc.divide(1, 0)).toThrow('Cannot divide by zero');\n});\n"
+        }
+      ],
+      "symbols": {
+        "calculator.js": [
+          "divide"
+        ],
+        "calculator.test.js": [
+          "test:divide-zero"
+        ]
+      },
+      "affects": {
+        "modules": [
+          "calculator.js"
+        ],
+        "apis": [
+          "divide(a, b)"
+        ],
+        "tests": [
+          "calculator.test.js — adds \"divide by zero\" case"
+        ],
+        "dependencies": [
+          "Error"
+        ]
+      },
+      "createdAt": 1787649157859,
+      "projectId": "prj-mt8fb922-1",
+      "approvedAt": 1787649172981,
+      "appliedAt": null,
+      "revertedAt": null,
+      "executions": []
+    },
+    {
+      "id": "int-mt8g638g-3",
+      "key": "guard-divide",
+      "provides": "divide-guard",
+      "title": "Guard divide against division by zero",
+      "summary": "Make divide(a, b) throw a clear error instead of returning Infinity when b is 0.",
+      "rationale": "divide currently returns Infinity for a zero denominator, which propagates silently into callers and corrupts downstream math. Throwing at the boundary surfaces the mistake where it happens and is the precondition other numeric features build on.",
+      "kind": "bugfix",
+      "risk": "medium",
+      "status": "approved",
+      "dependsOn": [],
+      "hunks": [
+        {
+          "path": "calculator.js",
+          "symbol": "divide",
+          "op": "replace",
+          "before": "function divide(a, b) {\n  return a / b;\n}",
+          "after": "function divide(a, b) {\n  if (b === 0) {\n    throw new Error('Cannot divide by zero');\n  }\n  return a / b;\n}"
+        },
+        {
+          "path": "calculator.test.js",
+          "symbol": "test:divide-zero",
+          "op": "append",
+          "before": "",
+          "after": "\ntest('divide throws when dividing by zero', () => {\n  expect(() => calc.divide(1, 0)).toThrow('Cannot divide by zero');\n});\n"
+        }
+      ],
+      "symbols": {
+        "calculator.js": [
+          "divide"
+        ],
+        "calculator.test.js": [
+          "test:divide-zero"
+        ]
+      },
+      "affects": {
+        "modules": [
+          "calculator.js"
+        ],
+        "apis": [
+          "divide(a, b)"
+        ],
+        "tests": [
+          "calculator.test.js — adds \"divide by zero\" case"
+        ],
+        "dependencies": [
+          "Error"
+        ]
+      },
+      "createdAt": 1787649185248,
+      "projectId": "prj-mt8fb922-1",
+      "approvedAt": 1787649629560,
+      "appliedAt": null,
+      "revertedAt": null,
+      "executions": []
+    },
+    {
+      "id": "int-mt8gcanz-4",
+      "key": "guard-divide",
+      "provides": "divide-guard",
+      "title": "Guard divide against division by zero",
+      "summary": "Make divide(a, b) throw a clear error instead of returning Infinity when b is 0.",
+      "rationale": "divide currently returns Infinity for a zero denominator, which propagates silently into callers and corrupts downstream math. Throwing at the boundary surfaces the mistake where it happens and is the precondition other numeric features build on.",
+      "kind": "bugfix",
+      "risk": "medium",
+      "status": "applied",
+      "dependsOn": [],
+      "hunks": [
+        {
+          "path": "calculator.js",
+          "symbol": "divide",
+          "op": "replace",
+          "before": "function divide(a, b) {\n  return a / b;\n}",
+          "after": "function divide(a, b) {\n  if (b === 0) {\n    throw new Error('Cannot divide by zero');\n  }\n  return a / b;\n}"
+        },
+        {
+          "path": "calculator.test.js",
+          "symbol": "test:divide-zero",
+          "op": "append",
+          "before": "",
+          "after": "\ntest('divide throws when dividing by zero', () => {\n  expect(() => calc.divide(1, 0)).toThrow('Cannot divide by zero');\n});\n"
+        }
+      ],
+      "symbols": {
+        "calculator.js": [
+          "divide"
+        ],
+        "calculator.test.js": [
+          "test:divide-zero"
+        ]
+      },
+      "affects": {
+        "modules": [
+          "calculator.js"
+        ],
+        "apis": [
+          "divide(a, b)"
+        ],
+        "tests": [
+          "calculator.test.js — adds \"divide by zero\" case"
+        ],
+        "dependencies": [
+          "Error"
+        ]
+      },
+      "createdAt": 1787649474815,
+      "projectId": "prj-mt8gcamc-3",
+      "approvedAt": 1787649474841,
+      "appliedAt": 1787649474853,
+      "revertedAt": null,
+      "executions": []
+    },
+    {
+      "id": "int-mt8gd9vy-5",
+      "key": "guard-divide",
+      "provides": "divide-guard",
+      "title": "Guard divide against division by zero",
+      "summary": "Make divide(a, b) throw a clear error instead of returning Infinity when b is 0.",
+      "rationale": "divide currently returns Infinity for a zero denominator, which propagates silently into callers and corrupts downstream math. Throwing at the boundary surfaces the mistake where it happens and is the precondition other numeric features build on.",
+      "kind": "bugfix",
+      "risk": "medium",
+      "status": "applied",
+      "dependsOn": [],
+      "hunks": [
+        {
+          "path": "calculator.js",
+          "symbol": "divide",
+          "op": "replace",
+          "before": "function divide(a, b) {\n  return a / b;\n}",
+          "after": "function divide(a, b) {\n  if (b === 0) {\n    throw new Error('Cannot divide by zero');\n  }\n  return a / b;\n}"
+        },
+        {
+          "path": "calculator.test.js",
+          "symbol": "test:divide-zero",
+          "op": "append",
+          "before": "",
+          "after": "\ntest('divide throws when dividing by zero', () => {\n  expect(() => calc.divide(1, 0)).toThrow('Cannot divide by zero');\n});\n"
+        }
+      ],
+      "symbols": {
+        "calculator.js": [
+          "divide"
+        ],
+        "calculator.test.js": [
+          "test:divide-zero"
+        ]
+      },
+      "affects": {
+        "modules": [
+          "calculator.js"
+        ],
+        "apis": [
+          "divide(a, b)"
+        ],
+        "tests": [
+          "calculator.test.js — adds \"divide by zero\" case"
+        ],
+        "dependencies": [
+          "Error"
+        ]
+      },
+      "createdAt": 1787649520462,
+      "projectId": "prj-mt8fb922-1",
+      "approvedAt": 1787649526401,
+      "appliedAt": 1787649526411,
+      "revertedAt": null,
+      "executions": []
+    },
+    {
+      "id": "int-mt8gdggz-6",
+      "key": "add-percent",
+      "provides": "percent",
+      "title": "Add percent(part, whole) built on divide",
+      "summary": "Add percent() to the public API. It calls divide() and depends on the divide-by-zero guard.",
+      "rationale": "percent() divides by whole, so it inherits divide's behavior for a zero denominator. It must build on the guarded divide — otherwise percent(1, 0) silently yields Infinity. Because it changes the public surface and depends on another change, it is treated as high-risk and needs explicit approval.",
+      "kind": "api-change",
+      "risk": "high",
+      "status": "applied",
+      "dependsOn": [
+        "int-mt8gd9vy-5"
+      ],
+      "hunks": [
+        {
+          "path": "calculator.js",
+          "symbol": "percent",
+          "op": "append",
+          "before": "",
+          "after": "\nfunction percent(part, whole) {\n  return divide(part, whole) * 100;\n}\nmodule.exports.percent = percent;\n"
+        },
+        {
+          "path": "calculator.test.js",
+          "symbol": "test:percent",
+          "op": "append",
+          "before": "",
+          "after": "\ntest('percent expresses part as a share of whole', () => {\n  expect(calc.percent(1, 4)).toBe(25);\n});\n"
+        }
+      ],
+      "symbols": {
+        "calculator.js": [
+          "percent"
+        ],
+        "calculator.test.js": [
+          "test:percent"
+        ]
+      },
+      "affects": {
+        "modules": [
+          "calculator.js"
+        ],
+        "apis": [
+          "percent(part, whole) — new"
+        ],
+        "tests": [
+          "calculator.test.js — adds \"percent\" case"
+        ],
+        "dependencies": [
+          "divide() — relies on its divide-by-zero guard"
+        ]
+      },
+      "createdAt": 1787649528995,
+      "projectId": "prj-mt8fb922-1",
+      "approvedAt": 1787649647569,
+      "appliedAt": 1787649647574,
+      "revertedAt": null,
+      "executions": []
+    },
+    {
+      "id": "int-mt8gg4cf-7",
+      "key": "add-percent-change",
+      "provides": "percent-change",
+      "title": "Add percentChange(from, to) built on percent",
+      "summary": "Add percentChange(), which reuses percent() to measure growth between two values.",
+      "rationale": "percentChange builds one level higher on percent(), extending the dependency chain. It is useful for showing how a multi-step revert has to unwind in order.",
+      "kind": "feature",
+      "risk": "medium",
+      "status": "applied",
+      "dependsOn": [
+        "int-mt8gdggz-6"
+      ],
+      "hunks": [
+        {
+          "path": "calculator.js",
+          "symbol": "percentChange",
+          "op": "append",
+          "before": "",
+          "after": "\nfunction percentChange(from, to) {\n  return percent(to - from, from);\n}\nmodule.exports.percentChange = percentChange;\n"
+        },
+        {
+          "path": "calculator.test.js",
+          "symbol": "test:percentchange",
+          "op": "append",
+          "before": "",
+          "after": "\ntest('percentChange measures growth between two values', () => {\n  expect(calc.percentChange(200, 250)).toBe(25);\n});\n"
+        }
+      ],
+      "symbols": {
+        "calculator.js": [
+          "percentChange"
+        ],
+        "calculator.test.js": [
+          "test:percentchange"
+        ]
+      },
+      "affects": {
+        "modules": [
+          "calculator.js"
+        ],
+        "apis": [
+          "percentChange(from, to) — new"
+        ],
+        "tests": [
+          "calculator.test.js — adds \"percentChange\" case"
+        ],
+        "dependencies": [
+          "percent() — builds directly on it"
+        ]
+      },
+      "createdAt": 1787649653247,
+      "projectId": "prj-mt8fb922-1",
+      "approvedAt": 1787649656535,
+      "appliedAt": 1787649656542,
+      "revertedAt": null,
+      "executions": []
+    }
+  ],
+  "events": [],
+  "executions": [
+    {
+      "id": "exec-mt8g25n6-1",
+      "intentId": "int-mt8g25mf-0",
+      "projectId": "prj-mt8g25le-1",
+      "status": "passed",
+      "startedAt": 1787649001746,
+      "finishedAt": 1787649001787,
+      "ok": true,
+      "exitCode": 0,
+      "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+      "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.19ms]\n(pass) subtract finds the difference\n(pass) multiply scales two numbers\n(pass) divide splits a into b parts [0.16ms]\n(pass) divide throws when dividing by zero [1.37ms]\n\n 5 pass\n 0 fail\n 5 expect() calls\nRan 5 tests across 1 file. [24.00ms]\n",
+      "durationMs": 39
+    },
+    {
+      "id": "exec-mt8g4jcv-2",
+      "intentId": "int-mt8g4jbv-1",
+      "projectId": "prj-mt8g4jab-2",
+      "status": "passed",
+      "startedAt": 1787649112831,
+      "finishedAt": 1787649112843,
+      "ok": true,
+      "exitCode": 0,
+      "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+      "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.02ms]\n(pass) subtract finds the difference\n(pass) multiply scales two numbers\n(pass) divide splits a into b parts [0.01ms]\n(pass) divide throws when dividing by zero [0.04ms]\n\n 5 pass\n 0 fail\n 5 expect() calls\nRan 5 tests across 1 file. [5.00ms]\n",
+      "durationMs": 12
+    },
+    {
+      "id": "exec-mt8g5m64-3",
+      "intentId": null,
+      "projectId": "prj-mt8fb922-1",
+      "status": "passed",
+      "startedAt": 1787649163132,
+      "finishedAt": 1787649163184,
+      "ok": true,
+      "exitCode": 0,
+      "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+      "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.19ms]\n(pass) subtract finds the difference [0.02ms]\n(pass) multiply scales two numbers [0.01ms]\n(pass) divide splits a into b parts [0.17ms]\n\n 4 pass\n 0 fail\n 4 expect() calls\nRan 4 tests across 1 file. [28.00ms]\n",
+      "durationMs": 52
+    },
+    {
+      "id": "exec-mt8g5ny9-4",
+      "intentId": null,
+      "projectId": "prj-mt8fb922-1",
+      "status": "passed",
+      "startedAt": 1787649165441,
+      "finishedAt": 1787649165474,
+      "ok": true,
+      "exitCode": 0,
+      "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+      "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.04ms]\n(pass) subtract finds the difference [0.03ms]\n(pass) multiply scales two numbers [0.02ms]\n(pass) divide splits a into b parts [0.02ms]\n\n 4 pass\n 0 fail\n 4 expect() calls\nRan 4 tests across 1 file. [16.00ms]\n",
+      "durationMs": 32
+    },
+    {
+      "id": "exec-mt8g5ts7-5",
+      "intentId": null,
+      "projectId": "prj-mt8fb922-1",
+      "status": "passed",
+      "startedAt": 1787649172999,
+      "finishedAt": 1787649173033,
+      "ok": true,
+      "exitCode": 0,
+      "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+      "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.02ms]\n(pass) subtract finds the difference [0.01ms]\n(pass) multiply scales two numbers\n(pass) divide splits a into b parts\n\n 4 pass\n 0 fail\n 4 expect() calls\nRan 4 tests across 1 file. [18.00ms]\n",
+      "durationMs": 34
+    },
+    {
+      "id": "exec-mt8gcaoz-6",
+      "intentId": "int-mt8gcanz-4",
+      "projectId": "prj-mt8gcamc-3",
+      "status": "passed",
+      "startedAt": 1787649474851,
+      "finishedAt": 1787649474888,
+      "ok": true,
+      "exitCode": 0,
+      "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+      "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.16ms]\n(pass) subtract finds the difference\n(pass) multiply scales two numbers\n(pass) divide splits a into b parts [0.16ms]\n(pass) divide throws when dividing by zero [1.25ms]\n\n 5 pass\n 0 fail\n 5 expect() calls\nRan 5 tests across 1 file. [24.00ms]\n",
+      "durationMs": 35
+    },
+    {
+      "id": "exec-mt8gdeh7-7",
+      "intentId": "int-mt8gd9vy-5",
+      "projectId": "prj-mt8fb922-1",
+      "status": "passed",
+      "startedAt": 1787649526411,
+      "finishedAt": 1787649526450,
+      "ok": true,
+      "exitCode": 0,
+      "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+      "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.04ms]\n(pass) subtract finds the difference [0.01ms]\n(pass) multiply scales two numbers [0.01ms]\n(pass) divide splits a into b parts [0.02ms]\n(pass) divide throws when dividing by zero [0.06ms]\n\n 5 pass\n 0 fail\n 5 expect() calls\nRan 5 tests across 1 file. [18.00ms]\n",
+      "durationMs": 37
+    },
+    {
+      "id": "exec-mt8gdeis-8",
+      "intentId": null,
+      "projectId": "prj-mt8fb922-1",
+      "status": "passed",
+      "startedAt": 1787649526468,
+      "finishedAt": 1787649526486,
+      "ok": true,
+      "exitCode": 0,
+      "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+      "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.04ms]\n(pass) subtract finds the difference [0.02ms]\n(pass) multiply scales two numbers [0.02ms]\n(pass) divide splits a into b parts [0.03ms]\n(pass) divide throws when dividing by zero [0.12ms]\n\n 5 pass\n 0 fail\n 5 expect() calls\nRan 5 tests across 1 file. [7.00ms]\n",
+      "durationMs": 18
+    },
+    {
+      "id": "exec-mt8gdkek-9",
+      "intentId": "int-mt8gdggz-6",
+      "projectId": "prj-mt8fb922-1",
+      "status": "passed",
+      "startedAt": 1787649534092,
+      "finishedAt": 1787649534120,
+      "ok": true,
+      "exitCode": 0,
+      "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+      "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.03ms]\n(pass) subtract finds the difference [0.01ms]\n(pass) multiply scales two numbers\n(pass) divide splits a into b parts [0.02ms]\n(pass) divide throws when dividing by zero [0.06ms]\n(pass) percent expresses part as a share of whole [0.01ms]\n\n 6 pass\n 0 fail\n 6 expect() calls\nRan 6 tests across 1 file. [10.00ms]\n",
+      "durationMs": 25
+    },
+    {
+      "id": "exec-mt8gdkfl-a",
+      "intentId": null,
+      "projectId": "prj-mt8fb922-1",
+      "status": "passed",
+      "startedAt": 1787649534129,
+      "finishedAt": 1787649534150,
+      "ok": true,
+      "exitCode": 0,
+      "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+      "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.03ms]\n(pass) subtract finds the difference\n(pass) multiply scales two numbers\n(pass) divide splits a into b parts [0.02ms]\n(pass) divide throws when dividing by zero [0.05ms]\n(pass) percent expresses part as a share of whole\n\n 6 pass\n 0 fail\n 6 expect() calls\nRan 6 tests across 1 file. [10.00ms]\n",
+      "durationMs": 21
+    },
+    {
+      "id": "exec-mt8gfm2m-b",
+      "intentId": "int-mt8g638g-3",
+      "projectId": "prj-mt8fb922-1",
+      "status": "failed",
+      "startedAt": 1787649629566,
+      "finishedAt": 1787649629568,
+      "ok": false,
+      "exitCode": null,
+      "stdout": "",
+      "stderr": "Can't apply cleanly to calculator.js: the target code changed since this was planned.",
+      "durationMs": 2
+    },
+    {
+      "id": "exec-mt8gfzyu-c",
+      "intentId": "int-mt8gdggz-6",
+      "projectId": "prj-mt8fb922-1",
+      "status": "passed",
+      "startedAt": 1787649647574,
+      "finishedAt": 1787649647614,
+      "ok": true,
+      "exitCode": 0,
+      "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+      "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.04ms]\n(pass) subtract finds the difference [0.01ms]\n(pass) multiply scales two numbers [0.01ms]\n(pass) divide splits a into b parts [0.03ms]\n(pass) divide throws when dividing by zero [0.15ms]\n(pass) percent expresses part as a share of whole [0.02ms]\n(pass) percent expresses part as a share of whole\n\n 7 pass\n 0 fail\n 7 expect() calls\nRan 7 tests across 1 file. [16.00ms]\n",
+      "durationMs": 38
+    },
+    {
+      "id": "exec-mt8gg008-d",
+      "intentId": null,
+      "projectId": "prj-mt8fb922-1",
+      "status": "passed",
+      "startedAt": 1787649647624,
+      "finishedAt": 1787649647638,
+      "ok": true,
+      "exitCode": 0,
+      "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+      "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.04ms]\n(pass) subtract finds the difference [0.02ms]\n(pass) multiply scales two numbers [0.02ms]\n(pass) divide splits a into b parts [0.02ms]\n(pass) divide throws when dividing by zero [0.08ms]\n(pass) percent expresses part as a share of whole [0.02ms]\n(pass) percent expresses part as a share of whole\n\n 7 pass\n 0 fail\n 7 expect() calls\nRan 7 tests across 1 file. [6.00ms]\n",
+      "durationMs": 14
+    },
+    {
+      "id": "exec-mt8gg6vx-e",
+      "intentId": "int-mt8gg4cf-7",
+      "projectId": "prj-mt8fb922-1",
+      "status": "passed",
+      "startedAt": 1787649656541,
+      "finishedAt": 1787649656583,
+      "ok": true,
+      "exitCode": 0,
+      "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+      "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.05ms]\n(pass) subtract finds the difference [0.02ms]\n(pass) multiply scales two numbers [0.02ms]\n(pass) divide splits a into b parts [0.03ms]\n(pass) divide throws when dividing by zero [0.13ms]\n(pass) percent expresses part as a share of whole [0.03ms]\n(pass) percent expresses part as a share of whole [0.01ms]\n(pass) percentChange measures growth between two values [0.02ms]\n\n 8 pass\n 0 fail\n 8 expect() calls\nRan 8 tests across 1 file. [13.00ms]\n",
+      "durationMs": 39
+    },
+    {
+      "id": "exec-mt8gg6x9-f",
+      "intentId": null,
+      "projectId": "prj-mt8fb922-1",
+      "status": "passed",
+      "startedAt": 1787649656589,
+      "finishedAt": 1787649656608,
+      "ok": true,
+      "exitCode": 0,
+      "stdout": "bun test v1.4.0 (34cbb9a40)\n",
+      "stderr": "\ncalculator.test.js:\n(pass) add sums two numbers [0.03ms]\n(pass) subtract finds the difference [0.01ms]\n(pass) multiply scales two numbers [0.01ms]\n(pass) divide splits a into b parts [0.02ms]\n(pass) divide throws when dividing by zero [0.06ms]\n(pass) percent expresses part as a share of whole [0.01ms]\n(pass) percent expresses part as a share of whole\n(pass) percentChange measures growth between two values\n\n 8 pass\n 0 fail\n 8 expect() calls\nRan 8 tests across 1 file. [8.00ms]\n",
+      "durationMs": 19
+    }
+  ]
+}

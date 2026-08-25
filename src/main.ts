@@ -7,7 +7,7 @@ const rt = makeRuntime();
 // Force the layer to build now so migrations run (and errors surface) at boot.
 await rt.runPromise(Effect.logInfo("starting intent-backend..."));
 
-const port = Number(process.env.PORT ?? 3000);
+const port = Number(process.env.PORT ?? 3001);
 const server = createServer(rt, port);
 console.log(`intent-backend listening on http://localhost:${server.port}`);
 console.log("routes:");

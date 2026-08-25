@@ -143,8 +143,8 @@ const genericAnnotate: Transform = (prompt, files) => {
   return {
     title: prompt.trim().slice(0, 60) || "Apply change",
     kind: "edit",
-    risk: "low",
-    reasoning: `No specialized transform matched; annotated ${target} with the request for a human to refine.`,
+    risk: "high",
+    reasoning: `No specialized code transform matched this request. The proposed edit is explicitly marked high-risk so it requires review before execution.`,
     edits: [{ path: target, op: "modify", newContent, diff: unifiedDiff(content, newContent, target) }],
   };
 };

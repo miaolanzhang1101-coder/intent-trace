@@ -1,21 +1,20 @@
 {
-  "name": "intent-backend",
+  "name": "javaai-intent-trace",
+  "private": true,
   "version": "1.0.0",
-  "description": "Intent-level version control backend for AI-generated code edits (JavaAI / intent-trace)",
   "type": "module",
-  "module": "src/main.ts",
+  "description": "Browser-based AI engineering workspace: write code, run tests, inspect the agent's intent graph, approve changes, and safely roll them back.",
   "scripts": {
-    "start": "bun run src/main.ts",
-    "demo": "bun run src/demo.ts",
-    "typecheck": "tsc --noEmit"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@electric-sql/pglite": "^0.2.17",
-    "drizzle-orm": "^0.36.4",
-    "effect": "^3.12.0"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@types/bun": "^1.1.14",
-    "typescript": "^5.7.2"
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.2"
   }
 }
