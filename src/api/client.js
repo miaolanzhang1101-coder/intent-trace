@@ -145,9 +145,68 @@ export const api = {
 
   async runTests() {
     const pid = await ensureProject()
-    return request(`/projects/${pid}/test`, {
-      method: 'POST',
-    })
+
+    try {
+      const response = await request(`/projects/${pid}/test`, {
+        method: 'POST',
+      })
+
+      const execution = response?.execution ?? response
+
+      const stdout = execution?.stdout || ''
+      const stderr = execution?.stderr || ''
+      const ok = execution?.ok === true || response?.ok === true
+
+      // The backend currently returns raw bun output rather than
+      // individual test records. Convert that output into the shape
+      // RunPanel expects while preserving the genuine backend result.
+      const output = `${stdout}${stderr ? `\n${stderr}` : ''}`.trim()
+
+      const results = [
+        {
+          name: execution?.status === 'running' ? 'bun test' : 'bun test',
+          pass: ok,
+          ms:
+            typeof execution?.durationMs === 'number'
+              ? execution.durationMs
+              : undefined,
+          error: ok ? null : (stderr || stdout || 'Tests failed'),
+        },
+      ]
+
+      const logs = output
+        ? output.split('\n').map((text) => ({
+            level: ok ? 'info' : 'error',
+            text,
+          }))
+        : []
+
+      return {
+        id: execution?.id ?? Date.now(),
+        ok,
+        results,
+        logs,
+        durationMs: execution?.durationMs ?? 0,
+        error: ok ? null : (stderr || stdout || 'Test suite failed'),
+        execution,
+        projectId: response?.projectId ?? pid,
+      }
+    } catch (error) {
+      return {
+        id: Date.now(),
+        ok: false,
+        results: [
+          {
+            name: 'bun test',
+            pass: false,
+            error: error.message || 'Failed to run tests',
+          },
+        ],
+        logs: [],
+        durationMs: 0,
+        error: error.message || 'Failed to run tests',
+      }
+    }
   },
 
   async getIntentGraph() {
@@ -211,9 +270,10 @@ export const api = {
     }
 
     try {
+      const key = (typeof requestInput === 'object' && requestInput?.key) || undefined
       const intent = await request(`/projects/${pid}/prompts`, {
         method: 'POST',
-        body: JSON.stringify({ text }),
+        body: JSON.stringify(key ? { key, text } : { text }),
       })
 
 
@@ -282,36 +342,7 @@ export const api = {
   },
 
   async run() {
-    // Test execution is currently performed by the backend during execute().
-    // Return the latest execution information for compatibility.
-    if (!projectId) {
-      await ensureProject()
-    }
-
-    const intents = await getIntents()
-    const latest = intents?.[0]
-
-    if (!latest) {
-      return {
-        id: Date.now(),
-        ok: false,
-        results: [],
-        error: 'No intent has been executed yet.',
-      }
-    }
-
-    const detail = await request(`/intents/${latest.id}`)
-
-    const executions = detail?.executions ?? []
-    const execution = executions[0]
-
-    return (
-      execution ?? {
-        id: Date.now(),
-        ok: true,
-        results: [],
-      }
-    )
+    return this.runTests()
   },
 
   async reset() {
@@ -349,7 +380,7 @@ export const api = {
         }
 
         eventSource.onerror = () => {
-          eventSource?.close()
+          if (closed) { eventSource?.close(); eventSource = null }
         }
 
         unsubscribeStream = () => {

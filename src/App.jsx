@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from 'react'
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react'
 import { api, ApprovalRequired, RevertBlocked, ConflictError } from './api/client'
 import { intentDiff } from './domain/intents'
 import Sidebar from './components/Sidebar'
@@ -52,6 +52,7 @@ export default function App() {
   const [applying, setApplying] = useState(false)
   const [reverting, setReverting] = useState(false)
   const [running, setRunning] = useState(false)
+  const runningRef = useRef(false)
   const [runPhase, setRunPhase] = useState(null)
   const [runLog, setRunLog] = useState(null)
   const [showLanding, setShowLanding] = useState(true)
@@ -76,7 +77,7 @@ export default function App() {
     return api.subscribe(() => {
       refresh()
     })
-  }, [refresh])
+  }, [])
 
   const selectedIntent = useMemo(
     () =>
@@ -218,7 +219,7 @@ export default function App() {
       })
       setRevertPlan(null)
       setView('run')
-      await doRun({ fromApply: true, files: [...new Set((intent.hunks || []).map((h) => h.path))] })
+      await doRun({ fromApply: true })
     } catch (err) {
       if (err instanceof RevertBlocked) {
         // Refresh the plan so the dialog can escalate to cascade.
@@ -235,6 +236,8 @@ export default function App() {
 
   /* ---------- run ---------- */
   const doRun = async ({ fromApply = false, files = [] } = {}) => {
+    if (runningRef.current) return
+    runningRef.current = true
     setRunning(true)
     setView('run')
     const __t0 = Date.now()
@@ -341,6 +344,7 @@ export default function App() {
         sub: error.message || 'Unknown error',
       })
     } finally {
+      runningRef.current = false
       setRunning(false)
     }
   }
@@ -365,7 +369,7 @@ export default function App() {
 
   return (
     <div className="app app--workspace">
-      {showLanding && <Landing onStart={() => { setShowLanding(false); onRequest({ key: 'guard-divide' }) }} />}
+      {showLanding && <Landing onStart={() => setShowLanding(false)} />}
       <Sidebar
         order={snap.order}
         activeFile={activeFile}
@@ -401,7 +405,7 @@ export default function App() {
                 )}
               </button>
               <div className="tabs__spacer" />
-              <button className="btn btn--primary tabs__run" onClick={() => doRun()} disabled={running} aria-busy={running} aria-label="Run test suite">
+              <button className="btn btn--primary tabs__run" onClick={() => doRun()} aria-busy={running} aria-label="Run test suite">
                 {running ? <Spinner size={14} className="run__spin" /> : <Beaker size={14} />}
                 {running ? 'Testing…' : 'Test'}
               </button>
@@ -438,7 +442,7 @@ export default function App() {
                 )
               )}
 
-              {view === 'run' && <RunPanel run={lastRun} running={running} phase={runPhase} log={runLog} impacted={selectedIntent ? [...new Set((selectedIntent.hunks || []).map((h) => h.path))] : []} preview={selectedIntent ? (selectedIntent.hunks || []).flatMap((h) => (h.after || '').split('\n')).filter((l) => l.length).slice(0, 24) : []} onRevert={selectedIntent && selectedIntent.status === 'applied' ? () => onRevert(selectedIntent) : null} />}
+              {view === 'run' && <RunPanel run={lastRun} running={running} phase={runPhase} log={runLog} impacted={selectedIntent ? [...new Set((selectedIntent.hunks || []).map((h) => h.path))] : []} preview={selectedIntent ? (selectedIntent.hunks || []).flatMap((h) => (h.after || '').split('\n')).filter((l) => l.length).slice(0, 24) : []} onRevert={selectedIntent && selectedIntent.status === 'applied' ? () => onRevert(selectedIntent) : null} onRun={doRun} />}
             </div>
 
             <ActivityDock events={snap.events} stats={snap.stats} />

@@ -2,24 +2,54 @@ import { useState, useEffect } from 'react'
 import { Check, X, Warn, Spinner, Beaker, Rollback } from './icons'
 
 function PhaseList({ steps, running }) {
-  if (!steps || !steps.length) {
-    if (!running) return null
-    return (
-      <div className="phases">
-        <div className="phase is-active">
-          <span className="phase__mark"><Spinner size={13} className="run__spin" /></span>
-          <span className="phase__text">Starting…</span>
-        </div>
-      </div>
-    )
-  }
+  const phaseNames = [
+    'Reading test files',
+    'Running bun test…',
+    'Finishing test run',
+  ]
+
+  const normalized = phaseNames.map((label, index) => {
+    const actual = steps?.[index]
+
+    if (actual) {
+      return {
+        label,
+        status: actual.status,
+      }
+    }
+
+    return {
+      label,
+      status: running
+        ? (index === 0 ? 'active' : 'pending')
+        : 'pending',
+    }
+  })
+
   return (
-    <div className={`phases ${running ? '' : 'phases--done'}`}>
-      {steps.map((st, i) => (
-        <div key={i} className={`phase is-${st.status}`}>
+    <div className="phases phases--fixed">
+      {normalized.map((st, i) => (
+        <div
+          key={st.label}
+          className={`phase is-${st.status}`}
+          style={{
+            position: 'relative',
+            transform: 'none',
+            animation: 'none',
+          }}
+        >
           <span className="phase__mark">
-            {st.status === 'done' ? <Check size={13} /> : st.status === 'fail' ? <X size={13} /> : <Spinner size={13} className="run__spin" />}
+            {st.status === 'done' ? (
+              <Check size={13} />
+            ) : st.status === 'fail' ? (
+              <X size={13} />
+            ) : st.status === 'active' ? (
+              <Spinner size={13} className="run__spin" />
+            ) : (
+              <span className="phase__pending" />
+            )}
           </span>
+
           <span className="phase__text">{st.label}</span>
         </div>
       ))}
@@ -28,22 +58,54 @@ function PhaseList({ steps, running }) {
 }
 
 function Typewriter({ lines, active }) {
-  const [n, setN] = useState(0)
+  const [n, setN] = useState(active ? 0 : lines.length)
+
   useEffect(() => {
-    if (!active || !lines.length) { setN(0); return }
-    setN(0)
+    if (!lines.length) {
+      setN(0)
+      return
+    }
+
+    if (!active) {
+      setN(lines.length)
+      return
+    }
+
     let i = 0
-    const id = setInterval(() => { i += 1; setN(i); if (i >= lines.length) clearInterval(id) }, 85)
+    setN(0)
+
+    const id = setInterval(() => {
+      i += 1
+      setN(Math.min(i, lines.length))
+
+      if (i >= lines.length) {
+        clearInterval(id)
+      }
+    }, 85)
+
     return () => clearInterval(id)
-  }, [active, lines])
-  if (!lines.length || !active) return null
+  }, [active])
+
+  if (!lines.length) return null
+
   const shown = lines.slice(0, n)
+
   return (
     <div className="typewrap">
-      <div className="typewrap__label">Writing code…</div>
+      <div className="typewrap__label">
+        {active ? 'Writing code…' : 'Code written'}
+      </div>
+
       <pre className="typewriter">
-        {shown.map((l, idx) => <div key={idx} className="typewriter__line">{l || '\u00A0'}</div>)}
-        {n < lines.length && <span className="typewriter__cursor">▍</span>}
+        {shown.map((l, idx) => (
+          <div key={idx} className="typewriter__line">
+            {l || '\u00A0'}
+          </div>
+        ))}
+
+        {active && n < lines.length && (
+          <span className="typewriter__cursor">▍</span>
+        )}
       </pre>
     </div>
   )
@@ -73,7 +135,7 @@ export default function RunPanel({ run, running, phase, log, onRevert, preview }
       <div className="runpanel">
         <div className="runpanel__empty">
           <Beaker size={22} />
-          <p>Press <b>Test</b> to run the suite.</p>
+          <p>Run the test suite against the current workspace.</p>
           <span>Runs for real in a sandboxed worker — the output is the genuine result.</span>
         </div>
       </div>
@@ -83,7 +145,8 @@ export default function RunPanel({ run, running, phase, log, onRevert, preview }
   return (
     <div className="runpanel">
       <div className="runpanel__body">
-        {(hasSteps || running) && <PhaseList steps={shownSteps} running={running} />}
+
+        <PhaseList steps={shownSteps} running={running} />
         <Typewriter lines={preview || []} active={running} />
 
         {!running && run && (

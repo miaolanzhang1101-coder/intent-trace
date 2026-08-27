@@ -9,3 +9,4 @@ server/*.bak
 *.bak
 
 .DS_Store
+.vercel

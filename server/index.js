@@ -290,7 +290,9 @@ async function handleCreateIntent(project, body) {
 
   const applied = appliedIntents(project.id)
 
-  const result = await planIntent(text, {
+  const planInput = typeof body?.key === 'string' && body.key ? { key: body.key, text } : text
+
+  const result = await planIntent(planInput, {
     files: project.files,
     applied,
   })
@@ -755,6 +757,10 @@ async function handleRequest(request) {
         }
 
         subscribers.get(projectId).push(controller)
+        controller.enqueue(": ping" + String.fromCharCode(10,10));
+        controller.__ping = setInterval(() => {
+          try { controller.enqueue(': ping' + String.fromCharCode(10, 10)) } catch { clearInterval(controller.__ping) }
+        }, 3000)
 
         controller.enqueue(
           `data: ${JSON.stringify({
@@ -766,6 +772,7 @@ async function handleRequest(request) {
       },
 
       cancel() {
+        if (controller && controller.__ping) clearInterval(controller.__ping)
         const listeners = subscribers.get(projectId) || []
         const next = listeners.filter((item) => item !== controller)
 

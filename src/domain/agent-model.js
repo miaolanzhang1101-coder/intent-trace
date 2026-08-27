@@ -7,7 +7,7 @@
 // would make applyIntent throw. We validate every hunk against the real files
 // and reject with a helpful reason instead of corrupting the workspace.
 
-const MODEL = 'claude-sonnet-4-6'
+const MODEL = 'claude-sonnet-4-5'
 const ENDPOINT = 'https://api.anthropic.com/v1/messages'
 
 const SYSTEM = `You are a code-editing agent for a small JavaScript project.
